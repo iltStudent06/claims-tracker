@@ -1,0 +1,11 @@
+{
+  "name": "claims-tracker",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix capstone-client run dev",
+    "dev:client": "npm --prefix capstone-client run dev",
+    "dev:api": "npm --prefix capstone-api run dev",
+    "build": "npm --prefix capstone-client run build && npm --prefix capstone-api run build",
+    "seed": "npm --prefix capstone-api run seed"
+  }
+}
