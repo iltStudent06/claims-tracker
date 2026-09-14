@@ -8,11 +8,13 @@ import { User, UserRole } from "../models/User";
 
 const router = Router();
 
+// Creates signed JWTs for authenticated users.
 const generateToken = (userId: string): string =>
   jwt.sign({ userId }, env.jwtSecret as jwt.Secret, {
     expiresIn: env.jwtExpiresIn as jwt.SignOptions["expiresIn"]
   });
 
+// Public auth route: create a new user account and return auth token + profile.
 router.post(
   "/register",
   validateRequest([
@@ -53,6 +55,7 @@ router.post(
   }
 );
 
+// Public auth route: validate credentials and return auth token + profile.
 router.post(
   "/login",
   validateRequest([
@@ -91,6 +94,7 @@ router.post(
   }
 );
 
+// Protected auth route: return the currently authenticated user profile.
 router.get("/me", protect, async (req, res, next) => {
   try {
     res.status(200).json({
