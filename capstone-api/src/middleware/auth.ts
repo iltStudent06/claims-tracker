@@ -3,10 +3,16 @@ import jwt from "jsonwebtoken";
 import { env } from "../config/env";
 import { User, UserRole } from "../models/User";
 
+// JWT payload shape used by this API.
 type JwtPayload = {
   userId: string;
 };
 
+// Authentication middleware:
+// - reads Bearer token from Authorization header
+// - verifies token signature and expiry
+// - loads the user and attaches it to req.user
+// - returns 401 for missing/invalid/expired tokens
 export const protect = async (
   req: Request,
   res: Response,
@@ -41,6 +47,10 @@ export const protect = async (
   }
 };
 
+// Authorization middleware factory:
+// - accepts allowed roles
+// - blocks requests from unauthenticated users or disallowed roles
+// - returns 403 when access is forbidden
 export const authorizeRoles =
   (...roles: UserRole[]) =>
   (req: Request, res: Response, next: NextFunction): void => {
