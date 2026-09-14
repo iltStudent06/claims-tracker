@@ -39,7 +39,7 @@ const seed = async (): Promise<void> => {
 
     const policies = await Policy.insertMany([
       {
-        policyNumber: "pol-1001",
+        policyNumber: "POL-AUTO-1001",
         holderName: "Emma Thompson",
         type: "auto",
         premium: 1200,
@@ -49,7 +49,7 @@ const seed = async (): Promise<void> => {
         owner: admin._id
       },
       {
-        policyNumber: "pol-1002",
+        policyNumber: "POL-HOME-1002",
         holderName: "Olivia Martin",
         type: "home",
         premium: 1800,
@@ -59,7 +59,7 @@ const seed = async (): Promise<void> => {
         owner: adjusterOne._id
       },
       {
-        policyNumber: "pol-1003",
+        policyNumber: "POL-LIFE-1003",
         holderName: "Ethan Walker",
         type: "life",
         premium: 950,
@@ -69,7 +69,7 @@ const seed = async (): Promise<void> => {
         owner: adjusterTwo._id
       },
       {
-        policyNumber: "pol-1004",
+        policyNumber: "POL-AUTO-1004",
         holderName: "Sophia Reed",
         type: "auto",
         premium: 1100,
@@ -79,7 +79,7 @@ const seed = async (): Promise<void> => {
         owner: admin._id
       },
       {
-        policyNumber: "pol-1005",
+        policyNumber: "POL-HOME-1005",
         holderName: "Mason Brooks",
         type: "home",
         premium: 2100,
@@ -87,89 +87,154 @@ const seed = async (): Promise<void> => {
         effectiveDate: new Date("2026-04-10"),
         expirationDate: new Date("2027-04-10"),
         owner: adjusterOne._id
+      },
+      {
+        policyNumber: "POL-LIFE-1006",
+        holderName: "Isabella Hayes",
+        type: "life",
+        premium: 1025,
+        status: "active",
+        effectiveDate: new Date("2026-05-01"),
+        expirationDate: new Date("2027-05-01"),
+        owner: adjusterTwo._id
+      },
+      {
+        policyNumber: "POL-AUTO-1007",
+        holderName: "Lucas Bennett",
+        type: "auto",
+        premium: 1340,
+        status: "active",
+        effectiveDate: new Date("2026-06-12"),
+        expirationDate: new Date("2027-06-12"),
+        owner: admin._id
+      },
+      {
+        policyNumber: "POL-HOME-1008",
+        holderName: "Mia Carter",
+        type: "home",
+        premium: 2250,
+        status: "expired",
+        effectiveDate: new Date("2024-09-01"),
+        expirationDate: new Date("2025-09-01"),
+        owner: adjusterOne._id
+      },
+      {
+        policyNumber: "POL-LIFE-1009",
+        holderName: "James Foster",
+        type: "life",
+        premium: 1180,
+        status: "active",
+        effectiveDate: new Date("2026-07-20"),
+        expirationDate: new Date("2027-07-20"),
+        owner: adjusterTwo._id
+      },
+      {
+        policyNumber: "POL-AUTO-1010",
+        holderName: "Charlotte Price",
+        type: "auto",
+        premium: 1425,
+        status: "cancelled",
+        effectiveDate: new Date("2025-10-10"),
+        expirationDate: new Date("2026-10-10"),
+        owner: admin._id
+      },
+      {
+        policyNumber: "POL-HOME-1011",
+        holderName: "Benjamin Scott",
+        type: "home",
+        premium: 1995,
+        status: "active",
+        effectiveDate: new Date("2026-08-15"),
+        expirationDate: new Date("2027-08-15"),
+        owner: adjusterOne._id
+      },
+      {
+        policyNumber: "POL-LIFE-1012",
+        holderName: "Amelia Turner",
+        type: "life",
+        premium: 875,
+        status: "expired",
+        effectiveDate: new Date("2024-11-01"),
+        expirationDate: new Date("2025-11-01"),
+        owner: adjusterTwo._id
+      },
+      {
+        policyNumber: "POL-AUTO-1013",
+        holderName: "Henry Coleman",
+        type: "auto",
+        premium: 1560,
+        status: "active",
+        effectiveDate: new Date("2026-09-05"),
+        expirationDate: new Date("2027-09-05"),
+        owner: admin._id
       }
     ]);
 
-    await Claim.create([
-      {
-        policy: policies[0]._id,
-        description: "Rear-end collision at traffic signal.",
-        incidentDate: new Date("2026-06-11"),
-        amount: 4300,
-        status: "submitted",
-        assignedTo: adjusterOne._id,
-        notes: []
-      },
-      {
-        policy: policies[1]._id,
-        description: "Storm-related roof damage.",
-        incidentDate: new Date("2026-05-20"),
-        amount: 12500,
-        status: "under-review",
-        assignedTo: adjusterTwo._id,
-        notes: [
-          {
-            author: adjusterTwo._id,
-            text: "Inspection report requested from contractor.",
-            createdAt: new Date("2026-05-22T10:00:00.000Z")
-          }
-        ]
-      },
-      {
-        policy: policies[2]._id,
-        description: "Life policy payout request.",
-        incidentDate: new Date("2026-03-03"),
-        amount: 50000,
-        status: "approved",
-        assignedTo: adjusterOne._id,
-        notes: [
-          {
-            author: admin._id,
-            text: "Beneficiary documents verified.",
-            createdAt: new Date("2026-03-08T09:30:00.000Z")
-          }
-        ]
-      },
-      {
-        policy: policies[3]._id,
-        description: "Windshield replacement claim.",
-        incidentDate: new Date("2026-02-14"),
-        amount: 780,
-        status: "denied",
-        assignedTo: adjusterTwo._id,
-        notes: [
-          {
-            author: adjusterTwo._id,
-            text: "Claim denied due to inactive coverage date.",
-            createdAt: new Date("2026-02-16T12:15:00.000Z")
-          }
-        ]
-      },
-      {
-        policy: policies[4]._id,
-        description: "Kitchen water leak remediation.",
-        incidentDate: new Date("2026-07-01"),
-        amount: 6400,
-        status: "closed",
-        assignedTo: adjusterOne._id,
-        notes: [
-          {
-            author: adjusterOne._id,
-            text: "Final invoice approved and paid.",
-            createdAt: new Date("2026-07-08T15:45:00.000Z")
-          }
-        ]
-      },
-      {
-        policy: policies[0]._id,
-        description: "Minor bumper scratch from parking lot incident.",
-        incidentDate: new Date("2026-08-12"),
-        amount: 950,
-        status: "submitted",
-        assignedTo: adjusterTwo._id,
-        notes: []
-      }
-    ]);
+    const claimStatuses = ["submitted", "under-review", "approved", "denied", "closed"] as const;
+
+    const claimDescriptions = [
+      "Rear-end collision at traffic signal.",
+      "Storm-related roof damage.",
+      "Life policy payout request.",
+      "Windshield replacement claim.",
+      "Kitchen water leak remediation.",
+      "Minor bumper scratch from parking lot incident.",
+      "Hail damage to vehicle hood and roof.",
+      "Basement flooding after heavy rain.",
+      "Fence and shed damage from windstorm.",
+      "Fire and smoke cleanup for garage.",
+      "Slip-and-fall medical reimbursement claim.",
+      "Electrical surge damaged home appliances.",
+      "Theft of personal property from vehicle.",
+      "Tree branch fell on parked car.",
+      "Pipe burst caused living room water damage.",
+      "Vandalism to exterior walls and windows.",
+      "Minor collision in low-speed intersection turn.",
+      "Temporary housing reimbursement request.",
+      "Vehicle side mirror replacement after impact.",
+      "Roof shingle replacement after hail event.",
+      "Garage door damage from backing collision.",
+      "Water heater leak and flooring replacement.",
+      "Broken window and interior weather damage.",
+      "Multi-vehicle accident with injury documentation.",
+      "Claim for recovered stolen property repairs."
+    ];
+
+    const claimSeedData = claimDescriptions.map((description, index) => {
+      const status = claimStatuses[index % claimStatuses.length];
+      const assignedTo = index % 2 === 0 ? adjusterOne._id : adjusterTwo._id;
+      const incidentDate = new Date(Date.UTC(2026, 0, 5 + index * 5, 14, 30));
+      const noteDate = new Date(incidentDate.getTime() + 2 * 24 * 60 * 60 * 1000);
+
+      const statusNoteText: Record<(typeof claimStatuses)[number], string> = {
+        submitted: "Claim submitted and awaiting adjuster triage.",
+        "under-review": "Supporting documents requested for review.",
+        approved: "Coverage confirmed and payment approved.",
+        denied: "Claim denied based on policy terms and review findings.",
+        closed: "Claim finalized and closed after settlement."
+      };
+
+      return {
+        policy: policies[index % policies.length]._id,
+        description,
+        incidentDate,
+        amount: 900 + (index + 1) * 475 + (index % 3) * 125,
+        status,
+        assignedTo,
+        notes:
+          status === "submitted"
+            ? []
+            : [
+                {
+                  author: status === "approved" || status === "closed" ? admin._id : assignedTo,
+                  text: statusNoteText[status],
+                  createdAt: noteDate
+                }
+              ]
+      };
+    });
+
+    await Claim.create(claimSeedData);
 
     const [userCount, policyCount, claimCount] = await Promise.all([
       User.countDocuments(),
