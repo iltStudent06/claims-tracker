@@ -73,7 +73,7 @@ const seed = async (): Promise<void> => {
         holderName: "Sophia Reed",
         type: "auto",
         premium: 1100,
-        status: "cancelled",
+        status: "canceled",
         effectiveDate: new Date("2025-03-01"),
         expirationDate: new Date("2026-03-01"),
         owner: admin._id
@@ -133,7 +133,7 @@ const seed = async (): Promise<void> => {
         holderName: "Charlotte Price",
         type: "auto",
         premium: 1425,
-        status: "cancelled",
+        status: "canceled",
         effectiveDate: new Date("2025-10-10"),
         expirationDate: new Date("2026-10-10"),
         owner: admin._id
