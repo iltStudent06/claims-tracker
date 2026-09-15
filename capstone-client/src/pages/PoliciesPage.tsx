@@ -390,84 +390,86 @@ function PoliciesPage() {
           <p>Loading policies...</p>
         ) : (
           <>
-            <table className="policies-table">
-              <thead>
-                <tr>
-                  <th>
-                    <button type="button" className="policies-sort-button" onClick={() => handleSort('policyNumber')}>
-                      Policy Number{getSortIndicator('policyNumber')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="policies-sort-button" onClick={() => handleSort('holderName')}>
-                      Policyholder Name{getSortIndicator('holderName')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="policies-sort-button" onClick={() => handleSort('type')}>
-                      Type{getSortIndicator('type')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="policies-sort-button" onClick={() => handleSort('premium')}>
-                      Premium{getSortIndicator('premium')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="policies-sort-button" onClick={() => handleSort('status')}>
-                      Status{getSortIndicator('status')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="policies-sort-button" onClick={() => handleSort('effectiveDate')}>
-                      Effective Date{getSortIndicator('effectiveDate')}
-                    </button>
-                  </th>
-                  <th>
-                    <button
-                      type="button"
-                      className="policies-sort-button"
-                      onClick={() => handleSort('expirationDate')}
-                    >
-                      Expiration Date{getSortIndicator('expirationDate')}
-                    </button>
-                  </th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedPolicies.length === 0 ? (
+            <div className="table-scroll">
+              <table className="policies-table">
+                <thead>
                   <tr>
-                    <td colSpan={8}>No policies found.</td>
+                    <th>
+                      <button type="button" className="policies-sort-button" onClick={() => handleSort('policyNumber')}>
+                        Policy Number{getSortIndicator('policyNumber')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="policies-sort-button" onClick={() => handleSort('holderName')}>
+                        Policyholder Name{getSortIndicator('holderName')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="policies-sort-button" onClick={() => handleSort('type')}>
+                        Type{getSortIndicator('type')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="policies-sort-button" onClick={() => handleSort('premium')}>
+                        Premium{getSortIndicator('premium')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="policies-sort-button" onClick={() => handleSort('status')}>
+                        Status{getSortIndicator('status')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="policies-sort-button" onClick={() => handleSort('effectiveDate')}>
+                        Effective Date{getSortIndicator('effectiveDate')}
+                      </button>
+                    </th>
+                    <th>
+                      <button
+                        type="button"
+                        className="policies-sort-button"
+                        onClick={() => handleSort('expirationDate')}
+                      >
+                        Expiration Date{getSortIndicator('expirationDate')}
+                      </button>
+                    </th>
+                    <th>Actions</th>
                   </tr>
-                ) : (
-                  sortedPolicies.map((policy) => {
-                    const policyId = policy.id ?? policy._id ?? ''
+                </thead>
+                <tbody>
+                  {sortedPolicies.length === 0 ? (
+                    <tr>
+                      <td colSpan={8}>No policies found.</td>
+                    </tr>
+                  ) : (
+                    sortedPolicies.map((policy) => {
+                      const policyId = policy.id ?? policy._id ?? ''
 
-                    return (
-                      <tr key={policyId || policy.policyNumber}>
-                        <td>{formatPolicyNumber(policy.policyNumber, policy.type)}</td>
-                        <td>{policy.holderName}</td>
-                        <td>{capitalizeFirstLetter(policy.type)}</td>
-                        <td>{formatCurrency(policy.premium)}</td>
-                        <td>{formatPolicyStatus(policy.status)}</td>
-                        <td>{new Date(policy.effectiveDate).toLocaleDateString()}</td>
-                        <td>{new Date(policy.expirationDate).toLocaleDateString()}</td>
-                        <td>
-                          <button
-                            type="button"
-                            onClick={() => policyId && handleDeletePolicy(policyId)}
-                            disabled={!policyId || deletingId === policyId}
-                          >
-                            {deletingId === policyId ? 'Deleting...' : 'Delete'}
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  })
-                )}
-              </tbody>
-            </table>
+                      return (
+                        <tr key={policyId || policy.policyNumber}>
+                          <td>{formatPolicyNumber(policy.policyNumber, policy.type)}</td>
+                          <td>{policy.holderName}</td>
+                          <td>{capitalizeFirstLetter(policy.type)}</td>
+                          <td>{formatCurrency(policy.premium)}</td>
+                          <td>{formatPolicyStatus(policy.status)}</td>
+                          <td>{new Date(policy.effectiveDate).toLocaleDateString()}</td>
+                          <td>{new Date(policy.expirationDate).toLocaleDateString()}</td>
+                          <td>
+                            <button
+                              type="button"
+                              onClick={() => policyId && handleDeletePolicy(policyId)}
+                              disabled={!policyId || deletingId === policyId}
+                            >
+                              {deletingId === policyId ? 'Deleting...' : 'Delete'}
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
 
             <div className="policies-pagination">
               <button

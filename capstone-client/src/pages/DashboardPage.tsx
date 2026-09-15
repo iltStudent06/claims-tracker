@@ -136,50 +136,52 @@ function DashboardPage() {
 
       <section className="table-card" aria-label="Recent claims">
         <h2>Most Recent Claims</h2>
-        <table className="claims-table">
-          <thead>
-            <tr>
-              <th>Claim #</th>
-              <th>Status</th>
-              <th>Amount</th>
-              <th>Policy</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stats.recentClaims.length === 0 ? (
+        <div className="table-scroll">
+          <table className="claims-table">
+            <thead>
               <tr>
-                <td colSpan={4}>No recent claims found.</td>
+                <th>Claim #</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Policy</th>
               </tr>
-            ) : (
-              stats.recentClaims.slice(0, 5).map((claim) => {
-                const claimId = claim.id ?? claim._id ?? ''
-                const policyNumber =
-                  typeof claim.policy === 'object'
-                    ? formatPolicyNumber(claim.policy.policyNumber, claim.policy.type)
-                    : formatPolicyNumber(claim.policy)
+            </thead>
+            <tbody>
+              {stats.recentClaims.length === 0 ? (
+                <tr>
+                  <td colSpan={4}>No recent claims found.</td>
+                </tr>
+              ) : (
+                stats.recentClaims.slice(0, 5).map((claim) => {
+                  const claimId = claim.id ?? claim._id ?? ''
+                  const policyNumber =
+                    typeof claim.policy === 'object'
+                      ? formatPolicyNumber(claim.policy.policyNumber, claim.policy.type)
+                      : formatPolicyNumber(claim.policy)
 
-                return (
-                  <tr key={claimId || claim.claimNumber}>
-                    <td>
-                      {claimId ? (
-                        <Link to={`/claims/${claimId}`}>{claim.claimNumber}</Link>
-                      ) : (
-                        claim.claimNumber
-                      )}
-                    </td>
-                    <td>
-                      <span className={`status-badge status-${claim.status}`}>
-                        {formatClaimStatus(claim.status)}
-                      </span>
-                    </td>
-                    <td>{formatCurrency(claim.amount)}</td>
-                    <td>{policyNumber}</td>
-                  </tr>
-                )
-              })
-            )}
-          </tbody>
-        </table>
+                  return (
+                    <tr key={claimId || claim.claimNumber}>
+                      <td>
+                        {claimId ? (
+                          <Link to={`/claims/${claimId}`}>{claim.claimNumber}</Link>
+                        ) : (
+                          claim.claimNumber
+                        )}
+                      </td>
+                      <td>
+                        <span className={`status-badge status-${claim.status}`}>
+                          {formatClaimStatus(claim.status)}
+                        </span>
+                      </td>
+                      <td>{formatCurrency(claim.amount)}</td>
+                      <td>{policyNumber}</td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
     </main>
   )

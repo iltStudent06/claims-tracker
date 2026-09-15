@@ -366,74 +366,76 @@ function ClaimsPage() {
           <p>Loading claims...</p>
         ) : (
           <>
-            <table className="claims-table">
-              <thead>
-                <tr>
-                  <th>
-                    <button type="button" className="claims-sort-button" onClick={() => handleSort('claimNumber')}>
-                      Claim Number{getSortIndicator('claimNumber')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="claims-sort-button" onClick={() => handleSort('policy')}>
-                      Policy{getSortIndicator('policy')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="claims-sort-button" onClick={() => handleSort('description')}>
-                      Description{getSortIndicator('description')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="claims-sort-button" onClick={() => handleSort('amount')}>
-                      Amount{getSortIndicator('amount')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="claims-sort-button" onClick={() => handleSort('status')}>
-                      Status{getSortIndicator('status')}
-                    </button>
-                  </th>
-                  <th>
-                    <button type="button" className="claims-sort-button" onClick={() => handleSort('incidentDate')}>
-                      Incident Date{getSortIndicator('incidentDate')}
-                    </button>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedClaims.length === 0 ? (
+            <div className="table-scroll">
+              <table className="claims-table">
+                <thead>
                   <tr>
-                    <td colSpan={6}>No claims found.</td>
+                    <th>
+                      <button type="button" className="claims-sort-button" onClick={() => handleSort('claimNumber')}>
+                        Claim Number{getSortIndicator('claimNumber')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="claims-sort-button" onClick={() => handleSort('policy')}>
+                        Policy{getSortIndicator('policy')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="claims-sort-button" onClick={() => handleSort('description')}>
+                        Description{getSortIndicator('description')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="claims-sort-button" onClick={() => handleSort('amount')}>
+                        Amount{getSortIndicator('amount')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="claims-sort-button" onClick={() => handleSort('status')}>
+                        Status{getSortIndicator('status')}
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" className="claims-sort-button" onClick={() => handleSort('incidentDate')}>
+                        Incident Date{getSortIndicator('incidentDate')}
+                      </button>
+                    </th>
                   </tr>
-                ) : (
-                  sortedClaims.map((claim) => {
-                    const claimId = claim.id ?? claim._id ?? ''
-                    const policyNumber =
-                      typeof claim.policy === 'object'
-                        ? formatPolicyNumber(claim.policy.policyNumber, claim.policy.type)
-                        : formatPolicyNumber(claim.policy)
+                </thead>
+                <tbody>
+                  {sortedClaims.length === 0 ? (
+                    <tr>
+                      <td colSpan={6}>No claims found.</td>
+                    </tr>
+                  ) : (
+                    sortedClaims.map((claim) => {
+                      const claimId = claim.id ?? claim._id ?? ''
+                      const policyNumber =
+                        typeof claim.policy === 'object'
+                          ? formatPolicyNumber(claim.policy.policyNumber, claim.policy.type)
+                          : formatPolicyNumber(claim.policy)
 
-                    return (
-                      <tr key={claimId || claim.claimNumber}>
-                        <td>
-                          {claimId ? <Link to={`/claims/${claimId}`}>{claim.claimNumber}</Link> : claim.claimNumber}
-                        </td>
-                        <td>{policyNumber}</td>
-                        <td>{claim.description}</td>
-                        <td>{formatCurrency(claim.amount)}</td>
-                        <td>
-                          <span className={`status-badge status-${claim.status}`}>
-                            {formatClaimStatus(claim.status)}
-                          </span>
-                        </td>
-                        <td>{new Date(claim.incidentDate).toLocaleDateString()}</td>
-                      </tr>
-                    )
-                  })
-                )}
-              </tbody>
-            </table>
+                      return (
+                        <tr key={claimId || claim.claimNumber}>
+                          <td>
+                            {claimId ? <Link to={`/claims/${claimId}`}>{claim.claimNumber}</Link> : claim.claimNumber}
+                          </td>
+                          <td>{policyNumber}</td>
+                          <td>{claim.description}</td>
+                          <td>{formatCurrency(claim.amount)}</td>
+                          <td>
+                            <span className={`status-badge status-${claim.status}`}>
+                              {formatClaimStatus(claim.status)}
+                            </span>
+                          </td>
+                          <td>{new Date(claim.incidentDate).toLocaleDateString()}</td>
+                        </tr>
+                      )
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
 
             <div className="claims-pagination">
               <button

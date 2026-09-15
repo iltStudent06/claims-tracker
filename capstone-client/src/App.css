@@ -105,6 +105,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px;
+  gap: 10px;
   background: var(--bg);
 }
 
@@ -139,6 +140,7 @@
 .navbar-links {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .navbar-link {
@@ -160,6 +162,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .navbar-user {
@@ -200,7 +203,7 @@
 
 .dashboard-page {
   min-height: 100svh;
-  padding: 24px;
+  padding: clamp(12px, 3vw, 24px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -377,7 +380,7 @@
 
 .claims-page {
   min-height: 100svh;
-  padding: 24px;
+  padding: clamp(12px, 3vw, 24px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -543,7 +546,7 @@
 
 .claim-detail-page {
   min-height: 100svh;
-  padding: 24px;
+  padding: clamp(12px, 3vw, 24px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -804,7 +807,7 @@
 
 .policies-page {
   min-height: 100svh;
-  padding: 24px;
+  padding: clamp(12px, 3vw, 24px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -952,6 +955,82 @@
   align-items: center;
   gap: 10px;
   font-size: 14px;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.claims-table,
+.policies-table {
+  min-width: 760px;
+}
+
+.table-card .claims-table {
+  min-width: 560px;
+}
+
+@media (max-width: 768px) {
+  .auth-page {
+    padding: 16px;
+  }
+
+  .auth-card {
+    padding: 16px;
+  }
+
+  .navbar {
+    padding: 10px 14px;
+  }
+
+  .navbar-brand {
+    font-size: 14px;
+  }
+
+  .navbar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .dashboard-page h1,
+  .claims-header h1,
+  .policies-header h1 {
+    font-size: 26px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .claims-header > button,
+  .policies-header > button {
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .claims-pagination,
+  .policies-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-user,
+  .navbar-role {
+    font-size: 12px;
+  }
+
+  .navbar-logout {
+    width: 100%;
+  }
 }
 
 @media (max-width: 1024px) {
