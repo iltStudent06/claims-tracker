@@ -4,8 +4,10 @@ import { User } from "../models/User";
 
 const router = Router();
 
+// User-management endpoints are restricted to authenticated admins.
 router.use(protect, authorizeRoles("admin"));
 
+// List all users for admin management views.
 router.get("/", async (_req, res, next) => {
   try {
     const users = await User.find().select("-password");

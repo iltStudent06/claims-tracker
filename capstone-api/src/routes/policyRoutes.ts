@@ -6,13 +6,21 @@ import { Policy } from "../models/Policy";
 
 const router = Router();
 
+const normalizePolicyStatus = (value: unknown): unknown =>
+  value === "cancelled" ? "canceled" : value;
+
+// All policy endpoints require an authenticated user.
 router.use(protect);
 
+// List policies with optional filters and pagination metadata.
 router.get(
   "/",
   validateRequest([
     query("type").optional().isIn(["auto", "home", "life"]),
-    query("status").optional().isIn(["active", "expired", "cancelled"]),
+    query("status")
+      .optional()
+      .customSanitizer(normalizePolicyStatus)
+      .isIn(["active", "expired", "canceled"]),
     query("search").optional().isString(),
     query("page").optional().isInt({ min: 1 }),
     query("limit").optional().isInt({ min: 1, max: 100 })
@@ -27,7 +35,11 @@ router.get(
         filters.type = req.query.type;
       }
       if (req.query.status) {
-        filters.status = req.query.status;
+        if (req.query.status === "canceled") {
+          filters.status = { $in: ["canceled", "cancelled"] };
+        } else {
+          filters.status = req.query.status;
+        }
       }
       if (req.query.search) {
         const search = String(req.query.search).trim();
@@ -60,6 +72,7 @@ router.get(
   }
 );
 
+// Get a single policy by id with owner details.
 router.get(
   "/:id",
   validateRequest([param("id").isMongoId().withMessage("Invalid policy id.")]),
@@ -79,6 +92,7 @@ router.get(
   }
 );
 
+// Create a policy owned by the authenticated user.
 router.post(
   "/",
   validateRequest([
@@ -86,7 +100,10 @@ router.post(
     body("holderName").trim().notEmpty().withMessage("Holder name is required."),
     body("type").isIn(["auto", "home", "life"]).withMessage("Invalid policy type."),
     body("premium").isFloat({ min: 0 }).withMessage("Premium must be a non-negative number."),
-    body("status").optional().isIn(["active", "expired", "cancelled"]),
+    body("status")
+      .optional()
+      .customSanitizer(normalizePolicyStatus)
+      .isIn(["active", "expired", "canceled"]),
     body("effectiveDate").isISO8601().withMessage("Effective date is required."),
     body("expirationDate").isISO8601().withMessage("Expiration date is required.")
   ]),
@@ -104,6 +121,7 @@ router.post(
   }
 );
 
+// Update policy fields while enforcing schema validators.
 router.put(
   "/:id",
   validateRequest([
@@ -112,7 +130,10 @@ router.put(
     body("holderName").optional().trim().notEmpty(),
     body("type").optional().isIn(["auto", "home", "life"]),
     body("premium").optional().isFloat({ min: 0 }),
-    body("status").optional().isIn(["active", "expired", "cancelled"]),
+    body("status")
+      .optional()
+      .customSanitizer(normalizePolicyStatus)
+      .isIn(["active", "expired", "canceled"]),
     body("effectiveDate").optional().isISO8601(),
     body("expirationDate").optional().isISO8601()
   ]),
@@ -138,6 +159,7 @@ router.put(
   }
 );
 
+// Delete a policy by id.
 router.delete(
   "/:id",
   validateRequest([param("id").isMongoId().withMessage("Invalid policy id.")]),

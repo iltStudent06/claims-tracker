@@ -7,8 +7,10 @@ import { Policy } from "../models/Policy";
 
 const router = Router();
 
+// All claim endpoints require an authenticated user.
 router.use(protect);
 
+// List claims with filters and pagination metadata.
 router.get(
   "/",
   validateRequest([
@@ -67,6 +69,7 @@ router.get(
   }
 );
 
+// Return aggregated claim statistics for dashboard usage.
 router.get("/stats", async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const [byStatus, totals] = await Promise.all([
@@ -104,6 +107,7 @@ router.get("/stats", async (_req: Request, res: Response, next: NextFunction) =>
   }
 });
 
+// Get a single claim with related policy, assignee, and note author details.
 router.get(
   "/:id",
   validateRequest([param("id").isMongoId().withMessage("Invalid claim id.")]),
@@ -126,6 +130,7 @@ router.get(
   }
 );
 
+// Create a new claim and auto-assign it to the authenticated user.
 router.post(
   "/",
   validateRequest([
@@ -168,6 +173,7 @@ router.post(
   }
 );
 
+// Update claim fields (status, amount, assignee, etc.) with validation.
 router.put(
   "/:id",
   validateRequest([
@@ -209,6 +215,7 @@ router.put(
   }
 );
 
+// Add a note to an existing claim.
 router.post(
   "/:id/notes",
   validateRequest([
@@ -248,6 +255,7 @@ router.post(
   }
 );
 
+// Delete a claim by id.
 router.delete(
   "/:id",
   validateRequest([param("id").isMongoId().withMessage("Invalid claim id.")]),

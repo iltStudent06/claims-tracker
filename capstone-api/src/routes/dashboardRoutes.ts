@@ -6,8 +6,10 @@ import { User } from "../models/User";
 
 const router = Router();
 
+// Dashboard endpoints require authentication.
 router.use(protect);
 
+// Return aggregated KPI-style dashboard data and most recent claims.
 router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const [
