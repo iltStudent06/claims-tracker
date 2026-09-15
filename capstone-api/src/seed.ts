@@ -171,6 +171,15 @@ const seed = async (): Promise<void> => {
     ]);
 
     const claimStatuses = ["submitted", "under-review", "approved", "denied", "closed"] as const;
+    type ClaimStatusSeed = (typeof claimStatuses)[number];
+
+    const claimStatusDistribution: ClaimStatusSeed[] = [
+      ...Array.from({ length: 8 }, () => "submitted" as const),
+      ...Array.from({ length: 5 }, () => "under-review" as const),
+      ...Array.from({ length: 4 }, () => "approved" as const),
+      ...Array.from({ length: 2 }, () => "denied" as const),
+      ...Array.from({ length: 6 }, () => "closed" as const)
+    ];
 
     const claimDescriptions = [
       "Rear-end collision at traffic signal.",
@@ -200,8 +209,12 @@ const seed = async (): Promise<void> => {
       "Claim for recovered stolen property repairs."
     ];
 
+    if (claimStatusDistribution.length !== claimDescriptions.length) {
+      throw new Error("Claim status distribution must match claim descriptions length.");
+    }
+
     const claimSeedData = claimDescriptions.map((description, index) => {
-      const status = claimStatuses[index % claimStatuses.length];
+      const status = claimStatusDistribution[index];
       const assignedTo = index % 2 === 0 ? adjusterOne._id : adjusterTwo._id;
       const incidentDate = new Date(Date.UTC(2026, 0, 5 + index * 5, 14, 30));
       const noteDate = new Date(incidentDate.getTime() + 2 * 24 * 60 * 60 * 1000);

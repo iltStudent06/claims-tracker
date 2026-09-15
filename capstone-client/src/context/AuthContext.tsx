@@ -10,6 +10,7 @@ import api from '../api'
 import type { ReactNode } from 'react'
 import type { AuthResponse, User, UserRole } from '../types'
 
+// Local storage keys used to persist authentication state across page reloads.
 const AUTH_TOKEN_KEY = 'token'
 const AUTH_USER_KEY = 'user'
 
@@ -34,10 +35,12 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  // In-memory auth state consumed by the rest of the app.
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Saves auth data in localStorage and updates React state.
   const persistAuth = useCallback((nextToken: string, nextUser: User) => {
     localStorage.setItem(AUTH_TOKEN_KEY, nextToken)
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nextUser))
@@ -45,6 +48,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(nextUser)
   }, [])
 
+  // Clears persisted auth and resets state to signed-out mode.
   const clearAuth = useCallback(() => {
     localStorage.removeItem(AUTH_TOKEN_KEY)
     localStorage.removeItem(AUTH_USER_KEY)
@@ -52,6 +56,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null)
   }, [])
 
+  // On first render, rehydrate auth state from localStorage if present.
   useEffect(() => {
     try {
       const storedToken = localStorage.getItem(AUTH_TOKEN_KEY)
@@ -71,6 +76,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [clearAuth])
 
+  // Authenticates an existing user and stores returned token/user profile.
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true)
     try {
@@ -81,6 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [persistAuth])
 
+  // Creates a new account, then signs the user in with returned credentials.
   const register = useCallback(
     async (name: string, email: string, password: string, role: UserRole) => {
       setLoading(true)
@@ -99,10 +106,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [persistAuth]
   )
 
+  // Signs out locally by clearing persisted auth state.
   const logout = useCallback(() => {
     clearAuth()
   }, [clearAuth])
 
+  // Memoized context value to avoid unnecessary downstream re-renders.
   const value = useMemo<AuthContextValue>(
     () => ({ user, token, loading, login, register, logout }),
     [user, token, loading, login, register, logout]
@@ -112,6 +121,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 }
 
 export function useAuth(): AuthContextValue {
+  // Convenience hook with guard to enforce provider usage.
   const context = useContext(AuthContext)
 
   if (!context) {
