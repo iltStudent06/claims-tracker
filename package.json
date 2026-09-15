@@ -2,10 +2,17 @@
   "name": "claims-tracker",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix capstone-client run dev",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\"",
+    "dev:clean": "sh -c 'for p in 4000 5173 5174; do if command -v lsof >/dev/null 2>&1; then lsof -ti tcp:$p | xargs -r kill -9; elif command -v fuser >/dev/null 2>&1; then fuser -k ${p}/tcp >/dev/null 2>&1; fi; done' && npm run dev",
     "dev:client": "npm --prefix capstone-client run dev",
     "dev:api": "npm --prefix capstone-api run dev",
+    "test": "npm run test:api && npm run test:client",
+    "test:api": "npm --prefix capstone-api test",
+    "test:client": "npm --prefix capstone-client test",
     "build": "npm --prefix capstone-client run build && npm --prefix capstone-api run build",
     "seed": "npm --prefix capstone-api run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
