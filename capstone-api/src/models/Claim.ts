@@ -1,5 +1,4 @@
 import { Document, Schema, Types, model } from "mongoose";
-import { Counter } from "./Counter";
 
 export type ClaimStatus = "submitted" | "under-review" | "approved" | "denied" | "closed";
 
@@ -52,13 +51,19 @@ claimSchema.pre("save", async function setClaimNumber() {
     return;
   }
 
-  const counter = await Counter.findOneAndUpdate(
-    { key: "claimNumber" },
-    { $inc: { sequenceValue: 1 } },
-    { new: true, upsert: true }
-  );
+  const counter = await this.db
+    .collection<{ key: string; sequenceValue: number }>("counters")
+    .findOneAndUpdate(
+      { key: "claimNumber" },
+      { $inc: { sequenceValue: 1 } },
+      { upsert: true, returnDocument: "after" }
+    );
 
-  this.claimNumber = `CLM-${counter.sequenceValue}`;
+  if (!counter) {
+    throw new Error("Failed to generate claim number");
+  }
+
+  this.claimNumber = `CLM-${String(counter.sequenceValue).padStart(4, "0")}`;
 });
 
 export const Claim = model<IClaim>("Claim", claimSchema);

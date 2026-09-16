@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { connectDB } from "./config/db";
 import { Claim } from "./models/Claim";
-import { Counter } from "./models/Counter";
 import { Policy } from "./models/Policy";
 import { User } from "./models/User";
 
@@ -12,9 +11,10 @@ const seed = async (): Promise<void> => {
     await Promise.all([
       Claim.deleteMany({}),
       Policy.deleteMany({}),
-      User.deleteMany({}),
-      Counter.deleteMany({})
+      User.deleteMany({})
     ]);
+
+    await mongoose.connection.collection("counters").deleteMany({});
 
     const admin = await User.create({
       name: "Ava Admin",

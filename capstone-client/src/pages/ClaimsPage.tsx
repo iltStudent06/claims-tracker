@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { FormEvent } from 'react'
 import api from '../api'
+import { formatClaimNumber } from '../utils/claimNumber'
 import { formatPolicyNumber } from '../utils/policyNumber'
 import type {
   ApiErrorResponse,
@@ -60,7 +61,7 @@ type SortDirection = 'asc' | 'desc'
 function getSortValue(claim: Claim, column: ClaimSortColumn): string | number {
   switch (column) {
     case 'claimNumber':
-      return claim.claimNumber
+      return formatClaimNumber(claim.claimNumber)
     case 'policy':
       return typeof claim.policy === 'object'
         ? formatPolicyNumber(claim.policy.policyNumber, claim.policy.type)
@@ -418,7 +419,11 @@ function ClaimsPage() {
                       return (
                         <tr key={claimId || claim.claimNumber}>
                           <td>
-                            {claimId ? <Link to={`/claims/${claimId}`}>{claim.claimNumber}</Link> : claim.claimNumber}
+                            {claimId ? (
+                              <Link to={`/claims/${claimId}`}>{formatClaimNumber(claim.claimNumber)}</Link>
+                            ) : (
+                              formatClaimNumber(claim.claimNumber)
+                            )}
                           </td>
                           <td>{policyNumber}</td>
                           <td>{claim.description}</td>

@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import api from '../api'
+import { formatClaimNumber } from '../utils/claimNumber'
 import { formatPolicyNumber } from '../utils/policyNumber'
 import type { ApiErrorResponse, Claim, ClaimStatus } from '../types'
 
@@ -311,7 +312,7 @@ function ClaimDetailPage() {
     <main className="claim-detail-page">
       <header className="claim-detail-header">
         <div className="claim-detail-heading">
-          <h1>Claim {claim.claimNumber}</h1>
+          <h1>Claim {formatClaimNumber(claim.claimNumber)}</h1>
           <p className="claim-detail-subtitle">Detailed claim information and activity</p>
         </div>
         <Link to="/claims">Back to Claims</Link>
@@ -336,7 +337,7 @@ function ClaimDetailPage() {
           <tbody>
             <tr>
               <th>Claim Number</th>
-              <td>{claim.claimNumber}</td>
+              <td>{formatClaimNumber(claim.claimNumber)}</td>
             </tr>
             <tr>
               <th>Policy</th>
