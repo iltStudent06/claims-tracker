@@ -51,10 +51,19 @@ claimSchema.pre("save", async function setClaimNumber() {
     return;
   }
 
-  const countersCollection = this.db.collection<{ _id: string; sequenceValue: number }>("counters");
-  const counterId = "claimNumber";
+  const countersCollection = this.db.collection<{
+    _id: string;
+    key?: string;
+    sequenceValue: number;
+  }>("counters");
+  const counterKey = "claimNumber";
 
-  const existingCounter = await countersCollection.findOne({ _id: counterId });
+  await countersCollection.updateOne(
+    { _id: counterKey, key: { $exists: false } },
+    { $set: { key: counterKey } }
+  );
+
+  const existingCounter = await countersCollection.findOne({ key: counterKey });
 
   if (!existingCounter) {
     const maxSequenceResult = await this.db
@@ -79,14 +88,14 @@ claimSchema.pre("save", async function setClaimNumber() {
     const maxSequence = maxSequenceResult[0]?.maxSequence ?? 0;
 
     await countersCollection.updateOne(
-      { _id: counterId },
-      { $setOnInsert: { sequenceValue: maxSequence } },
+      { key: counterKey },
+      { $setOnInsert: { key: counterKey, sequenceValue: maxSequence } },
       { upsert: true }
     );
   }
 
   const counter = await countersCollection.findOneAndUpdate(
-    { _id: counterId },
+    { key: counterKey },
     { $inc: { sequenceValue: 1 } },
     { returnDocument: "after" }
   );

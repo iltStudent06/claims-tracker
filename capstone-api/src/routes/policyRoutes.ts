@@ -2,12 +2,83 @@ import { NextFunction, Request, Response, Router } from "express";
 import { body, param, query } from "express-validator";
 import { protect } from "../middleware/auth";
 import { validateRequest } from "../middleware/validate";
-import { Policy } from "../models/Policy";
+import { Policy, PolicyType } from "../models/Policy";
 
 const router = Router();
 
 const normalizePolicyStatus = (value: unknown): unknown =>
   value === "canceled" ? "cancelled" : value;
+
+const policyTypeSegment: Record<PolicyType, string> = {
+  auto: "AUTO",
+  home: "HOME",
+  life: "LIFE"
+};
+
+const getPolicySequenceMax = async (typeSegment: string): Promise<number> => {
+  const maxSequenceResult = await Policy.db
+    .collection<{ policyNumber?: string }>("policies")
+    .aggregate<{ maxSequence: number }>([
+      {
+        $project: {
+          seq: {
+            $cond: [
+              {
+                $regexMatch: {
+                  input: "$policyNumber",
+                  regex: new RegExp(`^POL-${typeSegment}-\\d+$`)
+                }
+              },
+              { $toInt: { $arrayElemAt: [{ $split: ["$policyNumber", "-"] }, 2] } },
+              null
+            ]
+          }
+        }
+      },
+      { $match: { seq: { $ne: null } } },
+      { $group: { _id: null, maxSequence: { $max: "$seq" } } }
+    ])
+    .toArray();
+
+  return maxSequenceResult[0]?.maxSequence ?? 1000;
+};
+
+const generatePolicyNumber = async (type: PolicyType): Promise<string> => {
+  const countersCollection = Policy.db.collection<{
+    _id: string;
+    key?: string;
+    sequenceValue: number;
+  }>("counters");
+  const typeSegment = policyTypeSegment[type];
+  const counterKey = `policyNumber:${type}`;
+
+  await countersCollection.updateOne(
+    { _id: counterKey, key: { $exists: false } },
+    { $set: { key: counterKey } }
+  );
+
+  const maxSequence = await getPolicySequenceMax(typeSegment);
+
+  await countersCollection.updateOne(
+    { key: counterKey },
+    { $setOnInsert: { key: counterKey, sequenceValue: 1000 } },
+    { upsert: true }
+  );
+
+  await countersCollection.updateOne({ key: counterKey }, { $max: { sequenceValue: maxSequence } });
+
+  const counter = await countersCollection.findOneAndUpdate(
+    { key: counterKey },
+    { $inc: { sequenceValue: 1 } },
+    { returnDocument: "after" }
+  );
+
+  if (!counter) {
+    throw new Error("Failed to generate policy number");
+  }
+
+  return `POL-${typeSegment}-${counter.sequenceValue}`;
+};
 
 // All policy endpoints require an authenticated user.
 router.use(protect);
@@ -96,7 +167,6 @@ router.get(
 router.post(
   "/",
   validateRequest([
-    body("policyNumber").trim().notEmpty().withMessage("Policy number is required."),
     body("holderName").trim().notEmpty().withMessage("Holder name is required."),
     body("type").isIn(["auto", "home", "life"]).withMessage("Invalid policy type."),
     body("premium").isFloat({ min: 0 }).withMessage("Premium must be a non-negative number."),
@@ -109,10 +179,35 @@ router.post(
   ]),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const policy = await Policy.create({
-        ...req.body,
-        owner: req.user!._id
-      });
+      const type = req.body.type as PolicyType;
+      let policy;
+
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        const generatedPolicyNumber = await generatePolicyNumber(type);
+
+        try {
+          policy = await Policy.create({
+            ...req.body,
+            policyNumber: generatedPolicyNumber,
+            owner: req.user!._id
+          });
+          break;
+        } catch (createError) {
+          const isDuplicateKey =
+            typeof createError === "object" &&
+            createError !== null &&
+            "code" in createError &&
+            (createError as { code?: number }).code === 11000;
+
+          if (!isDuplicateKey || attempt === 2) {
+            throw createError;
+          }
+        }
+      }
+
+      if (!policy) {
+        throw new Error("Failed to create policy");
+      }
 
       res.status(201).json(policy);
     } catch (error) {

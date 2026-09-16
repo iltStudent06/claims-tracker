@@ -116,7 +116,6 @@ export interface LoginPayload {
 }
 
 export interface CreatePolicyPayload {
-  policyNumber: string
   holderName: string
   type: PolicyType
   premium: number

@@ -101,7 +101,6 @@ function PoliciesPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [showNewForm, setShowNewForm] = useState(false)
 
-  const [policyNumber, setPolicyNumber] = useState('')
   const [holderName, setHolderName] = useState('')
   const [policyType, setPolicyType] = useState<PolicyType>('auto')
   const [premium, setPremium] = useState('')
@@ -183,7 +182,6 @@ function PoliciesPage() {
   }
 
   const resetForm = () => {
-    setPolicyNumber('')
     setHolderName('')
     setPolicyType('auto')
     setPremium('')
@@ -200,7 +198,6 @@ function PoliciesPage() {
 
     try {
       await api.post('/policies', {
-        policyNumber,
         holderName,
         type: policyType,
         premium: Number(premium),
@@ -256,15 +253,6 @@ function PoliciesPage() {
         <section className="policies-form-card" aria-label="New policy form">
           <h2>New Policy</h2>
           <form className="policies-form" onSubmit={handleCreatePolicy}>
-            <label htmlFor="policyNumber">Policy Number</label>
-            <input
-              id="policyNumber"
-              type="text"
-              value={policyNumber}
-              onChange={(event) => setPolicyNumber(event.target.value)}
-              required
-            />
-
             <label htmlFor="holderName">Policyholder Name</label>
             <input
               id="holderName"
