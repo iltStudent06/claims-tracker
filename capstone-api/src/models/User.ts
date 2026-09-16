@@ -25,7 +25,7 @@ const userSchema = new Schema<IUserDocument>(
     role: { type: String, enum: ["adjuster", "admin"], default: "adjuster" }
   },
   {
-    timestamps: { createdAt: true, updatedAt: false },
+    timestamps: true,
     toJSON: {
       transform: (_doc, ret) => {
         const sanitized = ret as { password?: string };

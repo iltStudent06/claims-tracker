@@ -7,7 +7,7 @@ import { Policy } from "../models/Policy";
 const router = Router();
 
 const normalizePolicyStatus = (value: unknown): unknown =>
-  value === "cancelled" ? "canceled" : value;
+  value === "canceled" ? "cancelled" : value;
 
 // All policy endpoints require an authenticated user.
 router.use(protect);
@@ -20,7 +20,7 @@ router.get(
     query("status")
       .optional()
       .customSanitizer(normalizePolicyStatus)
-      .isIn(["active", "expired", "canceled"]),
+      .isIn(["active", "expired", "cancelled"]),
     query("search").optional().isString(),
     query("page").optional().isInt({ min: 1 }),
     query("limit").optional().isInt({ min: 1, max: 100 })
@@ -35,8 +35,8 @@ router.get(
         filters.type = req.query.type;
       }
       if (req.query.status) {
-        if (req.query.status === "canceled") {
-          filters.status = { $in: ["canceled", "cancelled"] };
+        if (req.query.status === "cancelled") {
+          filters.status = { $in: ["cancelled", "canceled"] };
         } else {
           filters.status = req.query.status;
         }
@@ -103,7 +103,7 @@ router.post(
     body("status")
       .optional()
       .customSanitizer(normalizePolicyStatus)
-      .isIn(["active", "expired", "canceled"]),
+      .isIn(["active", "expired", "cancelled"]),
     body("effectiveDate").isISO8601().withMessage("Effective date is required."),
     body("expirationDate").isISO8601().withMessage("Expiration date is required.")
   ]),
@@ -133,7 +133,7 @@ router.put(
     body("status")
       .optional()
       .customSanitizer(normalizePolicyStatus)
-      .isIn(["active", "expired", "canceled"]),
+      .isIn(["active", "expired", "cancelled"]),
     body("effectiveDate").optional().isISO8601(),
     body("expirationDate").optional().isISO8601()
   ]),

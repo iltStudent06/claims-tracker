@@ -19,7 +19,7 @@ const POLICY_TYPES: Array<{ label: string; value: PolicyType | '' }> = [
   { label: 'Life', value: 'life' },
 ]
 
-const POLICY_STATUS_OPTIONS: PolicyStatus[] = ['active', 'expired', 'canceled']
+const POLICY_STATUS_OPTIONS: PolicyStatus[] = ['active', 'expired', 'cancelled']
 
 const PAGE_SIZE = 10
 

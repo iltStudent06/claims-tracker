@@ -1,7 +1,7 @@
 import { Document, Schema, model, Types } from "mongoose";
 
 export type PolicyType = "auto" | "home" | "life";
-export type PolicyStatus = "active" | "expired" | "canceled";
+export type PolicyStatus = "active" | "expired" | "cancelled";
 
 export interface IPolicy extends Document {
   policyNumber: string;
@@ -21,12 +21,12 @@ const policySchema = new Schema<IPolicy>(
     holderName: { type: String, required: true, trim: true },
     type: { type: String, enum: ["auto", "home", "life"], required: true },
     premium: { type: Number, required: true, min: 0 },
-    status: { type: String, enum: ["active", "expired", "canceled"], default: "active" },
+    status: { type: String, enum: ["active", "expired", "cancelled"], default: "active" },
     effectiveDate: { type: Date, required: true },
     expirationDate: { type: Date, required: true },
     owner: { type: Schema.Types.ObjectId, ref: "User", required: true }
   },
-  { timestamps: { createdAt: true, updatedAt: false } }
+  { timestamps: true }
 );
 
 export const Policy = model<IPolicy>("Policy", policySchema);
