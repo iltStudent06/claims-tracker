@@ -96,6 +96,7 @@ function PoliciesPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const [showNewForm, setShowNewForm] = useState(false)
@@ -224,16 +225,12 @@ function PoliciesPage() {
   }
 
   const handleDeletePolicy = async (id: string) => {
-    const confirmed = window.confirm('Are you sure you want to delete this policy?')
-    if (!confirmed) {
-      return
-    }
-
     setDeletingId(id)
     setError(null)
 
     try {
       await api.delete(`/policies/${id}`)
+      setConfirmingDeleteId(null)
       setReloadKey((value) => value + 1)
     } catch (requestError) {
       if (axios.isAxiosError<ApiErrorResponse>(requestError)) {
@@ -455,13 +452,37 @@ function PoliciesPage() {
                           <td>{new Date(policy.effectiveDate).toLocaleDateString()}</td>
                           <td>{new Date(policy.expirationDate).toLocaleDateString()}</td>
                           <td>
-                            <button
-                              type="button"
-                              onClick={() => policyId && handleDeletePolicy(policyId)}
-                              disabled={!policyId || deletingId === policyId}
-                            >
-                              {deletingId === policyId ? 'Deleting...' : 'Delete'}
-                            </button>
+                            {!policyId ? (
+                              <span>—</span>
+                            ) : confirmingDeleteId === policyId ? (
+                              <div className="policies-delete-confirmation">
+                                <p className="policies-delete-message">Delete this policy?</p>
+                                <div className="policies-delete-actions">
+                                  <button
+                                    type="button"
+                                    onClick={() => setConfirmingDeleteId(null)}
+                                    disabled={deletingId === policyId}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeletePolicy(policyId)}
+                                    disabled={deletingId === policyId}
+                                  >
+                                    {deletingId === policyId ? 'Deleting...' : 'Confirm'}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setConfirmingDeleteId(policyId)}
+                                disabled={deletingId === policyId}
+                              >
+                                Delete
+                              </button>
+                            )}
                           </td>
                         </tr>
                       )
