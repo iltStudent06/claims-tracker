@@ -19,21 +19,21 @@ const seed = async (): Promise<void> => {
     const admin = await User.create({
       name: "Ava Admin",
       email: "ava.admin@example.com",
-      password: "AdminPass123!",
+      password: "AdminPass123",
       role: "admin"
     });
 
     const adjusterOne = await User.create({
       name: "Liam Adjuster",
       email: "liam.adjuster@example.com",
-      password: "AdjusterPass123!",
+      password: "AdjusterPass123",
       role: "adjuster"
     });
 
     const adjusterTwo = await User.create({
       name: "Noah Adjuster",
       email: "noah.adjuster@example.com",
-      password: "AdjusterPass456!",
+      password: "AdjusterPass456",
       role: "adjuster"
     });
 
