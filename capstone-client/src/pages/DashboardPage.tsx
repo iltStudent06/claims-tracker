@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api'
+import { formatClaimNumber } from '../utils/claimNumber'
 import { formatPolicyNumber } from '../utils/policyNumber'
 import type { ApiErrorResponse, DashboardStats } from '../types'
 
@@ -163,9 +164,9 @@ function DashboardPage() {
                     <tr key={claimId || claim.claimNumber}>
                       <td>
                         {claimId ? (
-                          <Link to={`/claims/${claimId}`}>{claim.claimNumber}</Link>
+                          <Link to={`/claims/${claimId}`}>{formatClaimNumber(claim.claimNumber)}</Link>
                         ) : (
-                          claim.claimNumber
+                          formatClaimNumber(claim.claimNumber)
                         )}
                       </td>
                       <td>

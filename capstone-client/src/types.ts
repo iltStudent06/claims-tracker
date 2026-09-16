@@ -1,7 +1,7 @@
 export type UserRole = 'admin' | 'adjuster'
 
 export type PolicyType = 'auto' | 'home' | 'life'
-export type PolicyStatus = 'active' | 'expired' | 'canceled' | 'cancelled'
+export type PolicyStatus = 'active' | 'expired' | 'cancelled' | 'canceled'
 
 export type ClaimStatus =
   | 'submitted'

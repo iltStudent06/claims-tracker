@@ -30,7 +30,7 @@ function formatCurrency(value: number): string {
   }).format(value)
 }
 
-function formatDate(value?: string): string {
+function formatTime(value?: string): string {
   if (!value) {
     return '—'
   }
@@ -40,7 +40,13 @@ function formatDate(value?: string): string {
     return '—'
   }
 
-  return date.toLocaleString()
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
 
 function formatDateWithShortTime(value?: string): string {
@@ -102,6 +108,7 @@ function ClaimDetailPage() {
   const [loading, setLoading] = useState(true)
   const [updatingClaim, setUpdatingClaim] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [editError, setEditError] = useState<string | null>(null)
 
@@ -254,11 +261,6 @@ function ClaimDetailPage() {
 
   const handleDeleteClaim = async () => {
     if (!id) {
-      return
-    }
-
-    const confirmed = window.confirm('Are you sure you want to delete this claim?')
-    if (!confirmed) {
       return
     }
 
@@ -445,7 +447,7 @@ function ClaimDetailPage() {
                           onChange={(event) => handleEditNoteChange(index, event.target.value)}
                         />
                         <small>
-                          {note.authorName} • {formatDate(note.createdAt)}
+                          {note.authorName} • {formatTime(note.createdAt)}
                         </small>
                       </div>
                     ))}
@@ -477,7 +479,7 @@ function ClaimDetailPage() {
                         <li key={`${note.createdAt}-${index}`}>
                           <p>{note.text}</p>
                           <small>
-                            {authorName} • {formatDate(note.createdAt)}
+                            {authorName} • {formatTime(note.createdAt)}
                           </small>
                         </li>
                       )
@@ -511,9 +513,33 @@ function ClaimDetailPage() {
 
       <section className="claim-detail-card" aria-label="Danger zone">
         <h2>Danger Zone</h2>
-        <button type="button" className="claim-delete-button" onClick={handleDeleteClaim} disabled={deleting}>
-          {deleting ? 'Deleting...' : 'Delete Claim'}
-        </button>
+        {confirmingDelete ? (
+          <div className="claim-edit-description">
+            <p>Are you sure you want to delete this claim?</p>
+            <div className="claim-edit-actions">
+              <button
+                type="button"
+                className="claim-edit-button"
+                onClick={() => setConfirmingDelete(false)}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button type="button" className="claim-delete-button" onClick={handleDeleteClaim} disabled={deleting}>
+                {deleting ? 'Deleting...' : 'Confirm Delete'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="claim-delete-button"
+            onClick={() => setConfirmingDelete(true)}
+            disabled={deleting}
+          >
+            Delete Claim
+          </button>
+        )}
       </section>
     </main>
   )

@@ -51,13 +51,45 @@ claimSchema.pre("save", async function setClaimNumber() {
     return;
   }
 
-  const counter = await this.db
-    .collection<{ key: string; sequenceValue: number }>("counters")
-    .findOneAndUpdate(
-      { key: "claimNumber" },
-      { $inc: { sequenceValue: 1 } },
-      { upsert: true, returnDocument: "after" }
+  const countersCollection = this.db.collection<{ _id: string; sequenceValue: number }>("counters");
+  const counterId = "claimNumber";
+
+  const existingCounter = await countersCollection.findOne({ _id: counterId });
+
+  if (!existingCounter) {
+    const maxSequenceResult = await this.db
+      .collection<{ claimNumber?: string }>("claims")
+      .aggregate<{ maxSequence: number }>([
+        {
+          $project: {
+            seq: {
+              $cond: [
+                { $regexMatch: { input: "$claimNumber", regex: /^CLM-\d+$/ } },
+                { $toInt: { $arrayElemAt: [{ $split: ["$claimNumber", "-"] }, 1] } },
+                null
+              ]
+            }
+          }
+        },
+        { $match: { seq: { $ne: null } } },
+        { $group: { _id: null, maxSequence: { $max: "$seq" } } }
+      ])
+      .toArray();
+
+    const maxSequence = maxSequenceResult[0]?.maxSequence ?? 0;
+
+    await countersCollection.updateOne(
+      { _id: counterId },
+      { $setOnInsert: { sequenceValue: maxSequence } },
+      { upsert: true }
     );
+  }
+
+  const counter = await countersCollection.findOneAndUpdate(
+    { _id: counterId },
+    { $inc: { sequenceValue: 1 } },
+    { returnDocument: "after" }
+  );
 
   if (!counter) {
     throw new Error("Failed to generate claim number");
