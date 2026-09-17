@@ -8,7 +8,6 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "seed": "tsx src/seed.ts",
-    "migrate:claim-numbers": "tsx src/migrateClaimNumbers.ts",
     "test": "vitest run"
   },
   "keywords": [],
