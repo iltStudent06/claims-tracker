@@ -156,9 +156,11 @@ function DashboardPage() {
                 stats.recentClaims.slice(0, 5).map((claim) => {
                   const claimId = claim.id ?? claim._id ?? ''
                   const policyNumber =
-                    typeof claim.policy === 'object'
+                    claim.policy && typeof claim.policy === 'object'
                       ? formatPolicyNumber(claim.policy.policyNumber, claim.policy.type)
-                      : formatPolicyNumber(claim.policy)
+                      : typeof claim.policy === 'string'
+                        ? formatPolicyNumber(claim.policy)
+                        : 'Deleted policy'
 
                   return (
                     <tr key={claimId || claim.claimNumber}>

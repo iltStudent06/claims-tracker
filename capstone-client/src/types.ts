@@ -55,7 +55,7 @@ export interface Claim {
   id: string
   _id?: string
   claimNumber: string
-  policy: string | Policy
+  policy: string | Policy | null
   description: string
   incidentDate: string
   amount: number

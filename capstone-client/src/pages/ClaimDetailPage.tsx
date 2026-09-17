@@ -152,6 +152,10 @@ function ClaimDetailPage() {
       return '—'
     }
 
+    if (!claim.policy) {
+      return 'Deleted policy'
+    }
+
     if (typeof claim.policy === 'string') {
       return formatPolicyNumber(claim.policy)
     }

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import { body, param, query } from "express-validator";
 import { protect } from "../middleware/auth";
 import { validateRequest } from "../middleware/validate";
+import { Claim } from "../models/Claim";
 import { Policy, PolicyType } from "../models/Policy";
 
 const router = Router();
@@ -260,6 +261,15 @@ router.delete(
   validateRequest([param("id").isMongoId().withMessage("Invalid policy id.")]),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const claimExists = await Claim.exists({ policy: req.params.id });
+
+      if (claimExists) {
+        res.status(409).json({
+          message: "Cannot delete policy because one or more claims reference it."
+        });
+        return;
+      }
+
       const policy = await Policy.findByIdAndDelete(req.params.id);
 
       if (!policy) {

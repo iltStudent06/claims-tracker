@@ -63,9 +63,11 @@ function getSortValue(claim: Claim, column: ClaimSortColumn): string | number {
     case 'claimNumber':
       return formatClaimNumber(claim.claimNumber)
     case 'policy':
-      return typeof claim.policy === 'object'
+      return claim.policy && typeof claim.policy === 'object'
         ? formatPolicyNumber(claim.policy.policyNumber, claim.policy.type)
-        : formatPolicyNumber(claim.policy)
+        : claim.policy
+          ? formatPolicyNumber(claim.policy)
+          : 'Deleted policy'
     case 'description':
       return claim.description
     case 'amount':
@@ -412,9 +414,11 @@ function ClaimsPage() {
                     sortedClaims.map((claim) => {
                       const claimId = claim.id ?? claim._id ?? ''
                       const policyNumber =
-                        typeof claim.policy === 'object'
+                        claim.policy && typeof claim.policy === 'object'
                           ? formatPolicyNumber(claim.policy.policyNumber, claim.policy.type)
-                          : formatPolicyNumber(claim.policy)
+                          : claim.policy
+                            ? formatPolicyNumber(claim.policy)
+                            : 'Deleted policy'
 
                       return (
                         <tr key={claimId || claim.claimNumber}>
